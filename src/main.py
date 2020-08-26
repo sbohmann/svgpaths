@@ -1,10 +1,11 @@
 from svglib import svglib
 import lxml.etree
 import re
+import svg_path
 
 
 indentation = 0
-attribute_name = re.compile('(?:\{.*\})?(\w+)')
+attribute_name = re.compile(r'(?:{.*})?(\w+)')
 
 
 def prn(value):
@@ -19,11 +20,16 @@ def rawname(key):
 
 
 def info(element):
-    prn(rawname(element.tag) + ' {')
+    raw_tag = rawname(element.tag)
+    prn(raw_tag + ' {')
     global indentation
     indentation += 4
     for key in element.keys():
-        prn(rawname(key) + ': [' + str(element.get(key)) + ']')
+        raw_key = rawname(key)
+        value = str(element.get(key))
+        prn(raw_key + ': [' + value + ']')
+        if raw_tag == 'path' and raw_key == 'd':
+            print(svg_path.parse(value))
     for sub in element:
         info(sub)
     indentation -= 4

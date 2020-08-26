@@ -1,5 +1,8 @@
+class Object(object):
+    pass
+
 def parse(path):
-    state = object()
+    state = Object()
     state.result = []
     state.index = 0
     state.command = None
@@ -12,7 +15,7 @@ def parse(path):
         if path[state.index].isalpha():
             raw_command = path[state.index]
             state.index += 1
-            state.command = raw_command.tolower()
+            state.command = raw_command.lower()
             state.relative_coordinates = raw_command.islower()
         elif state.command is None:
             raise ValueError('missing command character at index ' + str(state.index))
@@ -24,7 +27,16 @@ def parse(path):
     def move():
         x = read_number()
         y = read_number()
-        state.result.append('move_absolute(' + str(x) + str(y) + ')')
+        state.result.append('move_absolute(' + str(x) + ',' + str(y) + ')')
+
+    def curve():
+        x1 = read_number()
+        y1 = read_number()
+        x2 = read_number()
+        y2 = read_number()
+        x = read_number()
+        y = read_number()
+        state.result.append('move_absolute(' + str(x1) + ',' + str(y1) + ',' + str(x2) + ',' + str(y2) + ',' + str(x) + ',' + str(y) + ')')
 
     def read_number():
         skip_comma()
@@ -43,7 +55,8 @@ def parse(path):
             state.index += 1
 
     state.command_map = {
-        'm': move
+        'm': move,
+        'c': curve
     }
 
     build()
