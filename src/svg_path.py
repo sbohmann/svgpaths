@@ -53,7 +53,7 @@ def parse(path):
     def close():
         if not state.first_point:
             raise ValueError('First point not defined when closing path at index ' + str(state.index))
-        state.result.append('line_' + mode() + '(' + str(state.first_point[0]) + ', ' + str(state.first_point[1]) + ')')
+        state.result.append('close_path()')
 
     def read_number():
         skip_separators()
