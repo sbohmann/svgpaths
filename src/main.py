@@ -29,7 +29,9 @@ def info(element):
         value = str(element.get(key))
         prn(raw_key + ': [' + value + ']')
         if raw_tag == 'path' and raw_key == 'd':
-            print(svg_path.parse(value))
+            path = svg_path.parse(value)
+            for step in path:
+                prn(step)
     for sub in element:
         info(sub)
     indentation -= 4

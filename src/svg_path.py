@@ -34,7 +34,7 @@ def parse(path):
         y = read_number()
         if not state.first_point:
             state.first_point = (x, y)
-        state.result.append('move_' + mode() + '(' + str(x) + ',' + str(y) + ')')
+        state.result.append('move_' + mode() + '(' + str(x) + ', ' + str(y) + ')')
 
     def curve():
         x1 = read_number()
@@ -43,29 +43,37 @@ def parse(path):
         y2 = read_number()
         x = read_number()
         y = read_number()
-        state.result.append('curve_' + mode() + '(' + str(x1) + ',' + str(y1) + ',' + str(x2) + ',' + str(y2) + ',' + str(x) + ',' + str(y) + ')')
+        state.result.append('curve_' + mode() + '(' + str(x1) + ', ' + str(y1) + ', ' + str(x2) + ', ' + str(y2) + ', ' + str(x) + ', ' + str(y) + ')')
 
     def line():
         x = read_number()
         y = read_number()
-        state.result.append('line_' + mode() + '(' + str(x) + ',' + str(y) + ')')
+        state.result.append('line_' + mode() + '(' + str(x) + ', ' + str(y) + ')')
 
     def close():
         if not state.first_point:
             raise ValueError('First point not defined when closing path at index ' + str(state.index))
-        state.result.append('line_' + mode() + '(' + str(state.first_point[0]) + ',' + str(state.first_point[1]) + ')')
+        state.result.append('line_' + mode() + '(' + str(state.first_point[0]) + ', ' + str(state.first_point[1]) + ')')
 
     def read_number():
         skip_separators()
         result = ''
+        first_character = True
         while True:
             next_character = path[state.index]
-            if next_character == '-' or next_character.isdigit() or next_character == '.':
+            if is_number_part(next_character, first_character):
                 result += next_character
                 state.index += 1
+                first_character = False
             else:
                 break
         return float(result)
+
+    def is_number_part(character, first_character):
+        if first_character and character == '-':
+            return True
+        else:
+            return character.isdigit() or character == '.'
 
     def skip_separators():
         while True:
